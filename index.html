@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LTC Earnings Time Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f4f4f4; }
+    .calculator { background: white; padding: 2rem; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 1rem; }
+    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; border: 1px solid #ccc; border-radius: 5px; }
+    button { margin-top: 1.5rem; padding: 0.75rem; background: #28a745; color: white; border: none; border-radius: 5px; width: 100%; cursor: pointer; font-weight: bold; }
+    .result { margin-top: 2rem; background: #e8f5e9; padding: 1rem; border-left: 5px solid #28a745; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>LTC Time Calculator</h2>
+    <label for="start">Starting LTC</label>
+    <input type="number" id="start" value="0.02" step="0.001" />
+
+    <label for="target">Target LTC</label>
+    <input type="number" id="target" value="0.1" step="0.001" />
+
+    <label for="referrals">Number of Referrals</label>
+    <input type="number" id="referrals" value="5" />
+
+    <button onclick="calculateTime()">Calculate</button>
+
+    <div id="output" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    function calculateTime() {
+      const start = parseFloat(document.getElementById('start').value);
+      const target = parseFloat(document.getElementById('target').value);
+      const referrals = parseInt(document.getElementById('referrals').value);
+
+      const ltcToLitoshi = 100_000_000;
+      const yourLitoshi = 1000;
+      const referralBonus = 0.5;
+      const intervalMinutes = 10;
+
+      const neededLitoshi = (target - start) * ltcToLitoshi;
+      const earningsPerInterval = yourLitoshi + (referrals * yourLitoshi * referralBonus);
+
+      if (neededLitoshi <= 0 || earningsPerInterval <= 0) {
+        document.getElementById('output').innerText = 'No time needed or invalid input.';
+        document.getElementById('output').style.display = 'block';
+        return;
+      }
+
+      const intervals = neededLitoshi / earningsPerInterval;
+      const totalMinutes = intervals * intervalMinutes;
+      const totalHours = totalMinutes / 60;
+      const totalDays = totalHours / 24;
+
+      document.getElementById('output').innerHTML = `
+        <strong>⏳ Estimated Time:</strong><br>
+        <ul>
+          <li><strong>Per 10 min earnings:</strong> ${earningsPerInterval.toLocaleString()} litoshi</li>
+          <li><strong>Minutes:</strong> ${totalMinutes.toFixed(2)}</li>
+          <li><strong>Hours:</strong> ${totalHours.toFixed(2)}</li>
+          <li><strong>Days:</strong> ${totalDays.toFixed(2)}</li>
+        </ul>
+      `;
+      document.getElementById('output').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
